@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 const { validarJWT } = require("../middlewares/validar-jwt");
-const { createService, createProfessional, getServicesWithProfessionals, deleteService, deleteProfessional } = require('../controllers/servicesAndProfessionals');
+const { createService, createProfessional, getServicesWithProfessionals, deleteService, deleteProfessional, updateService, updateProfessional } = require('../controllers/servicesAndProfessionals');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { isDate } = require('../helpers/isDate');
@@ -41,6 +41,8 @@ router.delete('/:id', deleteService);
 
 router.delete('/professional/:id', deleteProfessional);
 
+router.put('/professional/:id', updateProfessional);
 
+router.put('/service/:id', updateService);
 
 module.exports = router;

@@ -115,7 +115,8 @@ const updateAppointment = async (req, res = response) => {
       client_id,
       service_name,
       is_cancelled,
-      is_completed
+      is_completed,
+      price
     } = req.body;
 
     const existingTurno = await Turno.findById(id);
@@ -143,26 +144,29 @@ const updateAppointment = async (req, res = response) => {
       });
     }
 
-    const updatedTurno = await Turno.findByIdAndUpdate(
-      id,
-      {
-        day,
-        start_hour,
-        end_hour,
-        date,
-        client_name,
-        client_phone,
-        client_email,
-        professional_id,
-        duration,
-        professional_name,
-        client_id,
-        service_name,
-        is_cancelled,
-        is_completed
-      },
-      { new: true } // Devuelve el turno actualizado
-    );
+    const updateData = {
+      day,
+      start_hour,
+      end_hour,
+      date,
+      client_name,
+      client_phone,
+      client_email,
+      professional_id,
+      duration,
+      professional_name,
+      client_id,
+      service_name,
+      is_cancelled,
+      is_completed
+    };
+
+    // Solo agregar price si fue enviado
+    if (price !== undefined) {
+      updateData.price = price;
+    }
+
+    const updatedTurno = await Turno.findByIdAndUpdate(id, updateData, { new: true });
 
     res.status(200).json({
       ok: true,

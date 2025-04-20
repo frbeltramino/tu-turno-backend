@@ -57,6 +57,10 @@ const TurnoSchema = new Schema({
   is_completed: {
     type: Boolean,
     default: false
+  },
+  price: {
+    type: Number,
+    default: 0
   }
 });
 
