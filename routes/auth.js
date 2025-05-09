@@ -11,7 +11,6 @@ const router = express.Router();
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 
-
 router.post(
     '/new', 
     [//middlewares

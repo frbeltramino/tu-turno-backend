@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
-const { createAppointment, getAppointments, updateAppointment, deleteAppointment, getAppointmentsByClientId, cancelAppointment, completeAppointment, getActiveAppointments } = require('../controllers/appointments');
+const { createAppointment, getAppointments, updateAppointment, deleteAppointment, getAppointmentsByClientId, cancelAppointment, completeAppointment, getActiveAppointments, getAppointmentsFromToday, getAppointmentsByDate } = require('../controllers/appointments');
 const { validarJWT } = require("../middlewares/validar-jwt");
 const { validarCampos } = require('../middlewares/validar-campos');
 const { isDate } = require('../helpers/isDate');
@@ -10,6 +10,10 @@ const { isDate } = require('../helpers/isDate');
 router.get('/', getAppointments );
 
 router.get('/activeAppointments', getActiveAppointments);
+
+router.get('/todayAppointments', getAppointmentsFromToday);
+
+router.get('/dateAppointments/:date', getAppointmentsByDate);
 
 router.use(validarJWT);
 

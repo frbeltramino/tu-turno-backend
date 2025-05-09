@@ -30,6 +30,7 @@ app.use('/api/events', require('./routes/events'));
 app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/holidays', require('./routes/holidays'));
 app.use('/api/servicesAndProfessionals', require('./routes/servicesAndProfessionals'));
+app.use('/api/admin', require('./routes/admin'));
 
 
 // escuchar peticiones

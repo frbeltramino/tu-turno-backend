@@ -252,6 +252,70 @@ const completeAppointment = async (req, res = response) => {
   }
 };
 
+const getAppointmentsFromToday = async (req, res = response) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const turnos = await Turno.find({
+      date: { $gte: today }
+    }).sort({ date: 1, start_hour: 1 });
+
+    res.status(200).json({
+      ok: true,
+      turnos
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      ok: false,
+      message: 'Por favor hable con el administrador'
+    });
+  }
+};
+
+const getAppointmentsByDate = async (req, res = response) => {
+  try {
+    const { date } = req.params;
+
+    if (!date) {
+      return res.status(400).json({
+        ok: false,
+        message: 'Debe proporcionar una fecha en el parámetro "date" (YYYY-MM-DD)',
+      });
+    }
+
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(selectedDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setHours(0, 0, 0, 0);
+
+    const turnos = await Turno.find({
+      date: {
+        $gte: selectedDate,
+        $lt: nextDay,
+      },
+      is_cancelled: false,
+      is_completed: false,
+    }).sort({ date: 1, start_hour: 1 });
+
+    res.status(200).json({
+      ok: true,
+      turnos,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      ok: false,
+      message: 'Por favor hable con el administrador',
+    });
+  }
+};
+
 module.exports = {
   getAppointments,
   createAppointment,
@@ -259,5 +323,7 @@ module.exports = {
   cancelAppointment,
   getAppointmentsByClientId,
   getActiveAppointments,
-  completeAppointment
+  completeAppointment,
+  getAppointmentsFromToday,
+  getAppointmentsByDate
 };
