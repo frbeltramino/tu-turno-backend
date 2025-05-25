@@ -61,7 +61,47 @@ const TurnoSchema = new Schema({
   price: {
     type: Number,
     default: 0
-  }
+  },
+  requires_deposit: {
+    type: Boolean,
+    default: false
+  },
+  is_confirmed: {
+    type: Boolean,
+    default: false
+  },
+  is_virtual: {
+    type: Boolean,
+    default: false
+  },
+  meet_link: {
+    type: String,
+    required: false
+  },
+  service_id: {
+    type: String,
+    required: true,
+  },
+   deposit_amount: { 
+    type: Number,
+    default: 0 
+  },
+  deposit_paid_amount: {
+    type: Number,
+    default: 0
+  },
+  professional_email: {
+    type: String,
+    required: false
+  },
+  professional_phone: {
+    type: String,
+    required: false
+  },
+  address: {
+    type: String,
+    required: false
+ },
 });
 
 module.exports = model('Turno', TurnoSchema);

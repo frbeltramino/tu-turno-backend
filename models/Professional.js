@@ -20,7 +20,12 @@ const ProfessionalSchema = new mongoose.Schema({
   description: { type: String, required: true },
   image: { type: String },
   working_days: [WorkingDaySchema],
-  holidays: [{ type: String }]  // Fechas en formato 'YYYY-MM-DD'
+  holidays: [{ type: String }], // Fechas en formato 'YYYY-MM-DD'
+  phone: { type: String },
+  email: { type: String },
+  bank_account_cbu: { type: String },
+  bank_account_alias: { type: String },
+  bank_account_titular: { type: String },
 });
 
 module.exports = mongoose.model('Professional', ProfessionalSchema);

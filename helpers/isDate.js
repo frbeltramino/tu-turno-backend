@@ -1,4 +1,8 @@
 const moment = require('moment');
+require('moment/locale/es'); 
+moment.locale('es');
+
+
 
 const isDate = (value ) => {
   if (!value){
@@ -13,6 +17,11 @@ const isDate = (value ) => {
   
 }
 
+const formatDate = (fechaISO) => {
+  return moment(fechaISO).format('D [de] MMMM [de] YYYY');
+};
+
 module.exports = {
-  isDate
+  isDate,
+  formatDate
 }

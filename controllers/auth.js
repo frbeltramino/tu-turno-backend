@@ -93,10 +93,18 @@ const loginUsuario = async (req, res = response) => {
     }
 
     if (usuario.role === 'admin') {
-      // Validar contraseña fija de admin
-      if (password !== process.env.ADMIN_PASSWORD) {
-        return res.status(400).json({ ok: false, message: 'Contraseña de admin incorrecta' });
+      // Validar contraseña fija de admin o por otp si hay generada
+      const otpUser = await Otp.findOne({ idUsuario: usuario._id });
+      if ( otpUser) {
+        if (password !== otpUser.otp) {
+          return res.status(400).json({ ok: false, message: 'Código OTP incorrecto' });
+        }
+      } else {
+        if (password !== process.env.ADMIN_PASSWORD) {
+          return res.status(400).json({ ok: false, message: 'Contraseña de admin incorrecta' });
+        }
       }
+      
     } else {
       // Validar OTP como siempre
       const otpUser = await Otp.findOne({ idUsuario: usuario._id });

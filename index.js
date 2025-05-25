@@ -4,6 +4,7 @@ const app = express();
 const { dbConnection } = require('./database/config');
 const cors = require('cors');
 
+
 //Base de datos
 dbConnection();
 
@@ -11,7 +12,6 @@ dbConnection();
 app.use(cors());
 
 const port = process.env.PORT;
-
 
 console.log(process.env);
 

@@ -4,8 +4,21 @@ const Professional = require('../models/Professional');
 
 const createService = async (req, res = response) => {
   try {
-    const { name, price, description, image, time_turns, professionals } = req.body;
+    const { 
+      name, 
+      price, 
+      description, 
+      image, 
+      time_turns, 
+      professionals, 
+      requires_deposit, 
+      is_virtual,
+      deposit_amount,
+      address 
+    } = req.body;
+
     console.log(req.body);
+
     // Validar que los campos requeridos están presentes
     if (!name || !description || !time_turns || !Array.isArray(professionals)) {
       return res.status(400).json({
@@ -31,9 +44,13 @@ const createService = async (req, res = response) => {
       description,
       image,
       time_turns,
-      professionals, // Deberían ser ObjectId válidos
+      professionals,
+      requires_deposit,
+      is_virtual,
+      deposit_amount,
+      address
     });
-
+    console.log(service);
     await service.save();
 
     return res.status(201).json({
@@ -55,7 +72,18 @@ const createService = async (req, res = response) => {
 const updateService = async (req, res = response) => {
   try {
     const { id } = req.params;
-    const { name, price, description, image, time_turns, professionals } = req.body;
+    const { 
+      name, 
+      price, 
+      description, 
+      image, 
+      time_turns, 
+      professionals, 
+      requires_deposit = false, 
+      is_virtual = false,
+      deposit_amount = 0,
+      address
+    } = req.body;
 
     // Verificar si el servicio existe
     const existingService = await Service.findById(id);
@@ -91,6 +119,10 @@ const updateService = async (req, res = response) => {
     existingService.image = image;
     existingService.time_turns = time_turns;
     existingService.professionals = professionals;
+    existingService.requires_deposit = requires_deposit;
+    existingService.is_virtual = is_virtual;
+    existingService.deposit_amount = deposit_amount;
+    existingService.address = address;
 
     await existingService.save();
 
@@ -112,7 +144,7 @@ const updateService = async (req, res = response) => {
 
 const createProfessional = async (req, res) => {
   try {
-    const { name, description, image, working_days, holidays } = req.body;
+    const { name, description, image, working_days, holidays, phone, email, bank_account_cbu, bank_account_alias, bank_account_titular } = req.body;
 
     // Validar datos
     console.log(req.body);
@@ -123,13 +155,25 @@ const createProfessional = async (req, res) => {
       });
     }
 
+    if (!email) {
+      return res.status(400).json({
+        ok: false,
+        message: "Falta el email del profesional",
+      });
+    }
+
     // Crear profesional
     const professional = new Professional({
       name,
       description,
       image,
       working_days,
-      holidays
+      holidays,
+      phone,
+      email,
+      bank_account_cbu,
+      bank_account_alias,
+      bank_account_titular
     });
 
     await professional.save();
@@ -153,7 +197,7 @@ const createProfessional = async (req, res) => {
 const updateProfessional = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, image, working_days, holidays } = req.body;
+    const { name, description, image, working_days, holidays, phone, email, bank_account_cbu, bank_account_alias, bank_account_titular } = req.body;
 
     // Validar datos requeridos
     if (!name || !description || !Array.isArray(working_days)) {
@@ -179,6 +223,12 @@ const updateProfessional = async (req, res) => {
     professional.image = image;
     professional.working_days = working_days;
     professional.holidays = holidays;
+    if (phone !== undefined) professional.phone = phone;
+    if (email !== undefined) professional.email = email;
+    if (bank_account_cbu !== undefined) professional.bank_account_cbu = bank_account_cbu;
+    if (bank_account_alias !== undefined) professional.bank_account_alias = bank_account_alias;
+    if (bank_account_titular !== undefined) professional.bank_account_titular = bank_account_titular;
+
 
     await professional.save();
 
