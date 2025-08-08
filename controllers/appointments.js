@@ -161,13 +161,28 @@ const getActiveAppointments = async (req, res = response) => {
 const getAppointmentsByClientId = async (req, res = response) => {
   const { id } = req.params;
   try {
-    const turnos = await Turno.find({ client_id: id })
-      .sort({ date: -1, start_hour: -1 }) // Orden descendente por fecha y hora
-      .limit(10); // Solo los últimos 10
+    // Pendientes / activos
+    const activos = await Turno.find({
+      client_id: id,
+      is_cancelled: false,
+      is_completed: false
+    })
+      .sort({ date: -1, start_hour: -1 })
+
+    // Cancelados o completados
+    const finalizados = await Turno.find({
+      client_id: id,
+      $or: [
+        { is_cancelled: true },
+        { is_completed: true }
+      ]
+    })
+      .sort({ date: -1, start_hour: -1 })
+      .limit(10);
 
     res.status(200).json({
       ok: true,
-      turnos
+      turnos: [...activos, ...finalizados] // Primero activos, luego finalizados
     });
   } catch (err) {
     res.status(500).json({
