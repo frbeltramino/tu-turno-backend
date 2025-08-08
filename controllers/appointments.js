@@ -74,7 +74,7 @@ const createAppointment = async (req, res = response) => {
       price: service.price || 0,
       requires_deposit: service.requires_deposit || false,
       is_virtual: service.is_virtual || false,
-      is_confirmed: false, // Por defecto al crear el turno
+      is_confirmed: !service.requires_deposit, // si requiere deposito se crea como pendiente
       deposit_amount: service.deposit_amount || 0,
       deposit_paid_amount: 0,
       profesional_email: profesional.email,
@@ -87,14 +87,11 @@ const createAppointment = async (req, res = response) => {
 
     let htmlContent;
     if (!service.requires_deposit) {
-      turno.is_confirmed = true;
       if (turno.is_virtual){//si el servicio es virtual y no requiere seña genero el meet link
         const meet_link = await createZoomMeeting(turno.service_name, turno.start_hour, turno.duration);
         turno.meet_link = meet_link;
       }
-    } else {
-      turno.is_confirmed = false;
-    }
+    } 
 
     // Primero guardamos el turno
     await turno.save();
@@ -283,15 +280,15 @@ const cancelAppointment = async (req, res = response) => {
       });
     }
 
-    if (turno.is_completed) {
-      turno.is_completed = false;
-    }
-
-    if (turno.is_confirmed) {
-      turno.is_confirmed = false;
+    if (turno.is_cancelled) {
+      return res.status(400).json({
+        ok: false,
+        message: 'El turno ya está cancelado'
+      });
     }
 
     turno.is_cancelled = true;
+
     await turno.save();
 
     res.status(200).json({
@@ -311,6 +308,7 @@ const cancelAppointment = async (req, res = response) => {
 
 const completeAppointment = async (req, res = response) => {
   const { id } = req.params;
+  const { deposit_amount } = req.body;
 
   try {
     const turno = await Turno.findById(id);
@@ -326,8 +324,8 @@ const completeAppointment = async (req, res = response) => {
       turno.is_cancelled = false;
     }
 
-    if (turno.is_confirmed) {
-      turno.is_confirmed = false;
+    if (deposit_amount >= 0) {
+      turno.deposit_paid_amount = deposit_amount;
     }
 
     turno.is_completed = true;
@@ -350,7 +348,7 @@ const completeAppointment = async (req, res = response) => {
 
 const acceptAppointment = async (req, res = response) => {
   const { id } = req.params;
-
+  const { deposit_amount } = req.body;
   try {
     const turno = await Turno.findById(id);
 
@@ -370,10 +368,17 @@ const acceptAppointment = async (req, res = response) => {
 
     turno.is_confirmed = true;
 
-    if (turno.is_virtual && turno.requires_deposit){//si el servicio es virtual y requiere seña genero el meet link
+  
+    if (deposit_amount >= 0) {
+      turno.deposit_paid_amount = deposit_amount;
+    }
+
+    // Si corresponde, se genera link de Zoom
+    if (turno.is_virtual && turno.requires_deposit) {
       const meet_link = await createZoomMeeting(turno.service_name, turno.start_hour, turno.duration);
       turno.meet_link = meet_link;
     }
+
     await turno.save();
 
     res.status(200).json({
@@ -381,6 +386,8 @@ const acceptAppointment = async (req, res = response) => {
       message: 'Turno marcado como aceptado',
       turno
     });
+    const emailTitle = 'Turno aceptado';
+    callSendEmail(turno, emailTitle, 'createAppt');
 
   } catch (err) {
     console.error(err);
