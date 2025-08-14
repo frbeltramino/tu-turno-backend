@@ -15,12 +15,12 @@ const createHoliday = async ( req, res = response) => {
     res.status(201).json({
       ok: true,
       holiday,
-      message: 'El feriado fué creado',
+      message: res.__('i18n.holidays.003')
     });
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador',
+      message: res.__('i18n.common.error.001'),
       err: err
     });
   }
@@ -36,7 +36,7 @@ const getHolidays = async (req, res = response) => {
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.common.error.001')
     });
   }
 }
@@ -52,7 +52,7 @@ getHolidaysById = async (req, res = response) => {
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.common.error.001')
     });
   }
 }
@@ -74,7 +74,7 @@ updateHoliday = async (req, res = response) => {
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.common.error.001')
     });
   }
 }
@@ -85,12 +85,12 @@ deleteHoliday = async (req, res = response) => {
     const holiday = await Feriado.findByIdAndDelete(id);
     res.status(200).json({
       ok: true,
-      message: 'El feriado fue borrado'
+      message: res.__('i18n.holidays.004'),
     });
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.common.error.001'),
     });
   }
 } 

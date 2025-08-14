@@ -13,7 +13,7 @@ const loginAdmin = async (req, res = response) => {
     if (!usuario) {
       return res.status(400).json({
         ok: false,
-        message: 'Correo no registrado',
+        message: res.__('i18n.admin.auth.001'),
       });
     }
 
@@ -21,7 +21,7 @@ const loginAdmin = async (req, res = response) => {
     if (usuario.role !== 'admin') {
       return res.status(403).json({
         ok: false,
-        message: 'No tienes permisos de administrador',
+        message: res.__('i18n.admin.auth.002'),
       });
     }
 
@@ -30,7 +30,7 @@ const loginAdmin = async (req, res = response) => {
     if (!validPassword) {
       return res.status(400).json({
         ok: false,
-        message: 'Contraseña incorrecta',
+        message: res.__('i18n.admin.auth.003'),
       });
     }
    
@@ -49,7 +49,7 @@ const loginAdmin = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador',
+      message: res.__('i18n.common.error.001'),
     });
   }
 };
@@ -81,7 +81,7 @@ const crearUsuarioAdmin = async (req, res = response) => {
     if (usuarioExistente) {
       return res.status(400).json({
         ok: false,
-        message: 'Ya existe un usuario con ese correo',
+        message: res.__('i18n.admin.auth.005'),
       });
     }
 
@@ -104,7 +104,7 @@ const crearUsuarioAdmin = async (req, res = response) => {
     // Respuesta simple
     res.status(201).json({
       ok: true,
-      message: 'Usuario admin creado correctamente',
+      message: res.__('i18n.admin.auth.006'),
       userId: usuario._id,
     });
 
@@ -112,7 +112,7 @@ const crearUsuarioAdmin = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador',
+      message: res.__('i18n.common.error.001'),
       error: err.message,
     });
   }

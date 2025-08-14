@@ -23,7 +23,7 @@ const createService = async (req, res = response) => {
     if (!name || !description || !time_turns || !Array.isArray(professionals)) {
       return res.status(400).json({
         ok: false,
-        message: "Faltan datos obligatorios o el formato de los profesionales es incorrecto",
+        message: res.__('i18n.servicesAndProfessionals.001'),
       });
     }
 
@@ -33,7 +33,7 @@ const createService = async (req, res = response) => {
     if (existingProfessionals.length !== professionals.length) {
       return res.status(400).json({
         ok: false,
-        message: "Uno o más profesionales no existen en la base de datos",
+        message: res.__('i18n.servicesAndProfessionals.002'),
       });
     }
 
@@ -56,14 +56,14 @@ const createService = async (req, res = response) => {
     return res.status(201).json({
       ok: true,
       service,
-      message: "El servicio fue creado exitosamente",
+      message: res.__('i18n.servicesAndProfessionals.003'),
     });
 
   } catch (err) {
     console.error(err);
     return res.status(500).json({
       ok: false,
-      message: "Error interno, por favor contacte al administrador",
+      message: res.__('i18n.common.error.001'),
       error: err.message,
     });
   }
@@ -90,7 +90,7 @@ const updateService = async (req, res = response) => {
     if (!existingService) {
       return res.status(404).json({
         ok: false,
-        message: "Servicio no encontrado",
+        message: res.__('i18n.servicesAndProfessionals.004'),
       });
     }
 
@@ -98,7 +98,7 @@ const updateService = async (req, res = response) => {
     if (!name || !description || !time_turns || !Array.isArray(professionals)) {
       return res.status(400).json({
         ok: false,
-        message: "Faltan datos obligatorios o el formato de los profesionales es incorrecto",
+        message: res.__('i18n.servicesAndProfessionals.005'),
       });
     }
 
@@ -108,7 +108,7 @@ const updateService = async (req, res = response) => {
     if (existingProfessionals.length !== professionals.length) {
       return res.status(400).json({
         ok: false,
-        message: "Uno o más profesionales no existen en la base de datos",
+        message: res.__('i18n.servicesAndProfessionals.006'),
       });
     }
 
@@ -129,14 +129,14 @@ const updateService = async (req, res = response) => {
     return res.status(200).json({
       ok: true,
       service: existingService,
-      message: "Servicio actualizado exitosamente",
+      message: res.__('i18n.servicesAndProfessionals.007'),
     });
 
   } catch (err) {
     console.error(err);
     return res.status(500).json({
       ok: false,
-      message: "Error interno, por favor contacte al administrador",
+      message: res.__('i18n.common.error.001'),
       error: err.message,
     });
   }
@@ -151,14 +151,14 @@ const createProfessional = async (req, res) => {
     if (!name || !description || !Array.isArray(working_days)) {
       return res.status(400).json({
         ok: false,
-        message: "Faltan datos obligatorios o el formato de los días de trabajo es incorrecto",
+        message: res.__('i18n.servicesAndProfessionals.008'),
       });
     }
 
     if (!email) {
       return res.status(400).json({
         ok: false,
-        message: "Falta el email del profesional",
+        message: res.__('i18n.servicesAndProfessionals.009'),
       });
     }
 
@@ -181,14 +181,14 @@ const createProfessional = async (req, res) => {
     res.status(201).json({
       ok: true,
       professional,
-      message: "El profesional fue creado exitosamente",
+      message: res.__('i18n.servicesAndProfessionals.010'),
     });
 
   } catch (err) {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: "Error interno, contacte al administrador",
+      message: res.__('i18n.common.error.001'),
       error: err.message,
     });
   }
@@ -203,7 +203,7 @@ const updateProfessional = async (req, res) => {
     if (!name || !description || !Array.isArray(working_days)) {
       return res.status(400).json({
         ok: false,
-        message: "Faltan datos obligatorios o el formato de los días de trabajo es incorrecto",
+        message: res.__('i18n.servicesAndProfessionals.008'),
       });
     }
 
@@ -213,7 +213,7 @@ const updateProfessional = async (req, res) => {
     if (!professional) {
       return res.status(404).json({
         ok: false,
-        message: "Profesional no encontrado",
+        message: res.__('i18n.servicesAndProfessionals.011'),
       });
     }
 
@@ -235,14 +235,14 @@ const updateProfessional = async (req, res) => {
     return res.status(200).json({
       ok: true,
       professional,
-      message: "El profesional fue actualizado exitosamente",
+      message: res.__('i18n.servicesAndProfessionals.012'),
     });
 
   } catch (err) {
     console.error(err);
     return res.status(500).json({
       ok: false,
-      message: "Error interno, contacte al administrador",
+      message: res.__('i18n.common.error.001'),
       error: err.message,
     });
   }
@@ -262,7 +262,7 @@ const getServicesWithProfessionals = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: "Error al obtener los servicios",
+      message: res.__('i18n.servicesAndProfessionals.013'),
       error: err.message
     });
   }
@@ -278,20 +278,20 @@ const deleteService = async (req, res) => {
     if (!deletedService) {
       return res.status(404).json({
         ok: false,
-        message: "Servicio no encontrado",
+        message: res.__('i18n.servicesAndProfessionals.014'),
       });
     }
 
     res.status(200).json({
       ok: true,
-      message: "Servicio eliminado correctamente",
+      message: res.__('i18n.servicesAndProfessionals.015'),
       deletedService,
     });
 
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: "Error al eliminar el servicio",
+      message: res.__('i18n.servicesAndProfessionals.016'),
       error: error.message,
     });
   }
@@ -307,7 +307,7 @@ const deleteProfessional = async (req, res) => {
     if (!deletedProfessional) {
       return res.status(404).json({
         ok: false,
-        message: "Profesional no encontrado",
+        message: res.__('i18n.servicesAndProfessionals.011'),
       });
     }
 
@@ -319,14 +319,14 @@ const deleteProfessional = async (req, res) => {
 
     res.status(200).json({
       ok: true,
-      message: "Profesional eliminado correctamente",
+      message: res.__('i18n.servicesAndProfessionals.017'),
       deletedProfessional,
     });
 
   } catch (error) {
     res.status(500).json({
       ok: false,
-      message: "Error al eliminar el profesional",
+      message: res.__('i18n.servicesAndProfessionals.018'),
       error: error.message,
     });
   }

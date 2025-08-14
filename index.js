@@ -3,6 +3,7 @@ require('dotenv').config();
 const app = express();
 const { dbConnection } = require('./database/config');
 const cors = require('cors');
+const i18n = require('./i18n'); 
 
 
 //Base de datos
@@ -23,6 +24,7 @@ app.use(express.static('public'));
 // LEctura y parseo de body
 app.use(express.json());
 
+app.use(i18n.init);
 
 // rutas
 app.use('/api/auth', require('./routes/auth'));
