@@ -44,7 +44,7 @@ const createAppointment = async (req, res = response) => {
     if (!service) {
       return res.status(404).json({
         ok: false,
-        message: 'Servicio no encontrado'
+        message: res.__('i18n.appointments.003')
       });
     }
 
@@ -52,7 +52,7 @@ const createAppointment = async (req, res = response) => {
     if (!profesional) {
       return res.status(404).json({
         ok: false,
-        message: 'Profesional no encontrado'
+        message: res.__('i18n.appointments.004')
       });
     }
 
@@ -82,16 +82,21 @@ const createAppointment = async (req, res = response) => {
       address: service.address || undefined
     });
 
-    const emailTitle = service.is_virtual ? 'Solicitud de turno virtual' : 'Solicitud de turno';
-    const serviceType = service.is_virtual ? 'Virtual' : 'Presencial';
+    const emailTitle = service.is_virtual ? res.__('i18n.email.title.005') : res.__('i18n.email.title.001');
+    const serviceType = service.is_virtual ? res.__('i18n.appointments.019') : res.__('i18n.appointments.020');
 
     let htmlContent;
-    if (!service.requires_deposit) {
-      if (turno.is_virtual){//si el servicio es virtual y no requiere seña genero el meet link
-        const meet_link = await createZoomMeeting(turno.service_name, turno.start_hour, turno.duration);
-        turno.meet_link = meet_link;
-      }
-    } 
+    if (turno.is_virtual && !service.requires_deposit) {
+    try {
+      turno.meet_link = await createZoomMeeting(turno.service_name, turno.start_hour, turno.duration);
+    } catch (error) {
+      console.error(res.__('i18n.appointments.021'), error);
+      return res.status(500).json({
+        ok: false,
+        message: res.__('i18n.appointments.021')
+      });
+    }
+  }
 
     // Primero guardamos el turno
     await turno.save();
@@ -111,7 +116,7 @@ const createAppointment = async (req, res = response) => {
     console.error('Error al crear turno:', err);
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador',
+      message: res.__('i18n.appointments.001'),
       err
     });
   }
@@ -128,7 +133,7 @@ const getAppointments = async (req, res = response) => {
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.appointments.001')
     });
   }
 };
@@ -153,7 +158,7 @@ const getActiveAppointments = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.appointments.001')
     });
   }
 };
@@ -187,7 +192,7 @@ const getAppointmentsByClientId = async (req, res = response) => {
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.appointments.001')
     });
   }
 };
@@ -224,21 +229,21 @@ const updateAppointment = async (req, res = response) => {
     if (!existingTurno) {
       return res.status(404).json({
         ok: false,
-        message: 'Turno no encontrado'
+        message: res.__('i18n.appointments.005')
       });
     }
 
     if (existingTurno.is_cancelled && is_completed) {
       return res.status(400).json({
         ok: false,
-        message: 'No se puede completar un turno que ya fue cancelado.'
+        message: res.__('i18n.appointments.006')
       });
     }
 
     if (existingTurno.is_completed && is_cancelled) {
       return res.status(400).json({
         ok: false,
-        message: 'No se puede cancelar un turno que ya fue completado.'
+        message: res.__('i18n.appointments.007')
       });
     }
 
@@ -277,7 +282,7 @@ const updateAppointment = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.appointments.001')
     });
   }
 };
@@ -291,14 +296,14 @@ const cancelAppointment = async (req, res = response) => {
     if (!turno) {
       return res.status(404).json({
         ok: false,
-        message: 'Turno no encontrado'
+        message: res.__('i18n.appointments.005')
       });
     }
 
     if (turno.is_cancelled) {
       return res.status(400).json({
         ok: false,
-        message: 'El turno ya está cancelado'
+        message: res.__('i18n.appointments.006')
       });
     }
 
@@ -308,7 +313,7 @@ const cancelAppointment = async (req, res = response) => {
 
     res.status(200).json({
       ok: true,
-      message: 'Turno cancelado correctamente',
+      message: res.__('i18n.appointments.011'),
       turno
     });
 
@@ -316,7 +321,7 @@ const cancelAppointment = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Error al cancelar el turno'
+      message: res.__('i18n.appointments.012')
     });
   }
 };
@@ -331,7 +336,7 @@ const completeAppointment = async (req, res = response) => {
     if (!turno) {
       return res.status(404).json({
         ok: false,
-        message: 'Turno no encontrado'
+        message: res.__('i18n.appointments.005')
       });
     }
 
@@ -348,7 +353,7 @@ const completeAppointment = async (req, res = response) => {
 
     res.status(200).json({
       ok: true,
-      message: 'Turno marcado como completado',
+      message: res.__('i18n.appointments.009'),
       turno
     });
 
@@ -356,7 +361,7 @@ const completeAppointment = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Error al completar el turno'
+      message: res.__('i18n.appointments.013')
     });
   }
 };
@@ -370,7 +375,7 @@ const acceptAppointment = async (req, res = response) => {
     if (!turno) {
       return res.status(404).json({
         ok: false,
-        message: 'Turno no encontrado'
+        message: res.__('i18n.appointments.005')
       });
     }
 
@@ -398,17 +403,17 @@ const acceptAppointment = async (req, res = response) => {
 
     res.status(200).json({
       ok: true,
-      message: 'Turno marcado como aceptado',
+      message: res.__('i18n.appointments.010'),
       turno
     });
-    const emailTitle = 'Turno aceptado';
+    const emailTitle = res.__('i18n.email.title.004');
     callSendEmail(turno, emailTitle, 'createAppt');
 
   } catch (err) {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Error al aceptar el turno'
+      message: res.__('i18n.appointments.014')
     });
   }
 };
@@ -431,7 +436,7 @@ const getAppointmentsFromToday = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.appointments.001')
     });
   }
 };
@@ -443,7 +448,7 @@ const getAppointmentsByDate = async (req, res = response) => {
     if (!date) {
       return res.status(400).json({
         ok: false,
-        message: 'Debe proporcionar una fecha en el parámetro "date" (YYYY-MM-DD)',
+        message: res.__('i18n.appointments.015'),
       });
     }
 
@@ -470,7 +475,7 @@ const getAppointmentsByDate = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador',
+      message: res.__('i18n.appointments.001'),
     });
   }
 };
@@ -484,7 +489,7 @@ const cancelAppointmentByClient = async (req, res = response) => {
     if (!turno) {
       return res.status(404).json({
         ok: false,
-        message: 'Turno no encontrado'
+        message: res.__('i18n.appointments.005')
       });
     }
 
@@ -498,14 +503,14 @@ const cancelAppointmentByClient = async (req, res = response) => {
     if (diferenciaEnHoras < process.env.HORAS_DE_CANCELACION) {
       return res.status(400).json({
         ok: false,
-        message: 'El turno no se puede cancelar porque está dentro de las últimas ' + process.env.HORAS_DE_CANCELACION + ' horas.'
+        message: res.__('i18n.appointments.016') + process.env.HORAS_DE_CANCELACION + res.__('i18n.appointments.017')
       });
     }
 
     if (turno.is_completed) {
       return res.status(400).json({
         ok: false,
-        message: 'El turno ya fué completado.'
+        message: res.__('i18n.appointments.018')
       });
     }
 
@@ -517,13 +522,13 @@ const cancelAppointmentByClient = async (req, res = response) => {
     await turno.save();
 
  
-    const emailTitle = 'Cancelación de turno';
+    const emailTitle = res.__('i18n.email.title.003');
     callSendEmail(turno, emailTitle, 'cancelAppointment');
 
 
     res.status(200).json({
       ok: true,
-      message: 'Turno cancelado correctamente',
+      message: res.__('i18n.appointments.011'),
       turno
     });
 
@@ -531,26 +536,27 @@ const cancelAppointmentByClient = async (req, res = response) => {
     console.error(err);
     res.status(500).json({
       ok: false,
-      message: 'Error al cancelar el turno'
+      message: res.__('i18n.appointments.012')
     });
   }
 };
 
 const callSendEmail = async (turno, emailTitle, action) => {
+  const i18n = require('../i18n');
   try {
     const service = await Service.findById(turno.service_id);
     if (!service) {
-      console.error('Servicio no encontrado');
+      console.error(i18n.__('i18n.appointments.003'));
       return;
     }
 
     const profesional = await Professional.findById(turno.professional_id);
     if (!profesional) {
-      console.error('Profesional no encontrado');
+      console.error(i18n.__('i18n.appointments.004'));
       return;
     }
 
-    const serviceType = service.is_virtual ? 'Virtual' : 'Presencial';
+    const serviceType = service.is_virtual ? i18n.__('i18n.appointments.019') : i18n.__('i18n.appointments.020');
 
     const {
       client_name,

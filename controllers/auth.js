@@ -17,7 +17,7 @@ const crearUsuario = async (req, res = response) => {
   if (usuario) {
     res.status(400).json({
       ok: false,
-      message: 'Un usuario existe con ese correo'
+      message: res.__('i18n.auth.002')
     });
     return;
   }
@@ -25,7 +25,7 @@ const crearUsuario = async (req, res = response) => {
   if (!phone) {
     res.status(400).json({
       ok: false,
-      message: 'Ingrese un numero de telefono'
+      message: res.__('i18n.auth.003')
     });
     return;
   }
@@ -33,7 +33,7 @@ const crearUsuario = async (req, res = response) => {
   if (!otpRegisterParam) {
     res.status(400).json({
       ok: false,
-      message: 'Ingrese un código de verificación'
+      message: res.__('i18n.auth.004')
     });
     return;
   }
@@ -42,7 +42,7 @@ const crearUsuario = async (req, res = response) => {
   if (!registerOtp) {
     res.status(400).json({
       ok: false,
-      message: 'El usuario no tiene un código generado'
+      message: res.__('i18n.auth.005')
     });
     return;
   }
@@ -52,7 +52,7 @@ const crearUsuario = async (req, res = response) => {
   if (!validOTPPassword) {
     res.status(400).json({
       ok: false,
-      message: 'El código ingresado es incorrecto'
+      message: res.__('i18n.auth.006')
     });
     return;
   }
@@ -77,7 +77,7 @@ const crearUsuario = async (req, res = response) => {
 } catch (err) {
   res.status(500).json({
     ok: false,
-    message: 'Por favor hable con el administrador',
+    message: res.__('i18n.auth.007'),
     err: err
   });
 }
@@ -89,7 +89,7 @@ const loginUsuario = async (req, res = response) => {
   try {
     const usuario = await Usuario.findOne({ email });
     if (!usuario) {
-      return res.status(400).json({ ok: false, message: 'El usuario no existe con ese email' });
+      return res.status(400).json({ ok: false, message: res.__('i18n.auth.008') });
     }
 
     if (usuario.role === 'admin') {
@@ -97,11 +97,11 @@ const loginUsuario = async (req, res = response) => {
       const otpUser = await Otp.findOne({ idUsuario: usuario._id });
       if ( otpUser) {
         if (password !== otpUser.otp) {
-          return res.status(400).json({ ok: false, message: 'Código OTP incorrecto' });
+          return res.status(400).json({ ok: false, message: res.__('i18n.auth.009') });
         }
       } else {
         if (password !== process.env.ADMIN_PASSWORD) {
-          return res.status(400).json({ ok: false, message: 'Contraseña de admin incorrecta' });
+          return res.status(400).json({ ok: false, message: res.__('i18n.auth.010') });
         }
       }
       
@@ -109,7 +109,7 @@ const loginUsuario = async (req, res = response) => {
       // Validar OTP como siempre
       const otpUser = await Otp.findOne({ idUsuario: usuario._id });
       if (!otpUser || password !== otpUser.otp) {
-        return res.status(400).json({ ok: false, message: 'Código OTP incorrecto o no generado' });
+        return res.status(400).json({ ok: false, message: res.__('i18n.auth.011') });
       }
     }
 
@@ -117,7 +117,7 @@ const loginUsuario = async (req, res = response) => {
     res.status(200).json({ ok: true, uid: usuario._id, name: usuario.name, user: usuario, token });
 
   } catch (err) {
-    res.status(500).json({ ok: false, message: 'Por favor hable con el administrador', err });
+    res.status(500).json({ ok: false, message: res.__('i18n.auth.007'), err });
   }
 };
 
@@ -150,7 +150,7 @@ const guardarOtp = async (req, res = response) => {
   if (!usuario) {
     res.status(400).json({
       ok: false,
-      message: 'El usuario no existe con ese email'
+      message: res.__('i18n.auth.008')
     });
     return;
   }
@@ -160,7 +160,7 @@ const guardarOtp = async (req, res = response) => {
   if (otpSaved) {
     res.status(500).json({
       ok: false,
-      message: 'Ya hay un código generado para éste usuario'
+      message: res.__('i18n.auth.012')
     });
     return;
   }
@@ -178,12 +178,12 @@ const guardarOtp = async (req, res = response) => {
   res.status(201).json({
     ok: true,
     Otp,
-    message: 'Otp guardado'
+    message: res.__('i18n.auth.015')
   });
 } catch (err) {
   res.status(500).json({
     ok: false,
-    message: 'Por favor hable con el administrador'
+    message: res.__('i18n.auth.007')
   });
 }
 }
@@ -199,7 +199,7 @@ const getOtp = async (req, res = response) => {
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador'
+      message: res.__('i18n.auth.007')
     });
   }
 }
@@ -215,12 +215,12 @@ const deleteOtp = async (req, res = response) => {
     const otp = await Otp.findOneAndDelete({ idUsuario: usuario._id });
     res.status(200).json({
       ok: true,
-      message: 'Otp eliminado'
+      message: res.__('i18n.auth.016')
     });
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: 'Por favor hable con el administrador',
+      message: res.__('i18n.auth.007'),
     });
   }
 }
@@ -249,7 +249,7 @@ const guardarRegisterOtp = async (req, res = response) => {
 
     res.status(201).json({
       ok: true,
-      message: "Otp para registro guardado",
+      message: res.__('i18n.auth.017'),
       otp: otp, // 🔹 Ahora el frontend recibe el OTP
       email: email, // (opcional) Enviar el email de vuelta
     });
@@ -257,7 +257,7 @@ const guardarRegisterOtp = async (req, res = response) => {
     console.error("🔥 Error en el servidor:", err);
     res.status(500).json({
       ok: false,
-      message: "Por favor hable con el administrador",
+      message: res.__('i18n.auth.007'),
       error: err.message, // 🔹 Enviar error detallado
     });
   }
@@ -270,7 +270,7 @@ const deleteRegisterOtp = async (req, res = response) => {
     const otp = await otpRegister.findOneAndDelete({ email });
     res.status(200).json({
       ok: true,
-      message: "Otp de registroeliminado",
+      message: res.__('i18n.auth.018'),
       otp: otp, // 🔹 Ahora el frontend recibe el OTP
       email: email, // (opcional) Enviar el email de vuelta
     });
@@ -278,7 +278,7 @@ const deleteRegisterOtp = async (req, res = response) => {
     console.error("🔥 Error en el servidor:", err);
     res.status(500).json({
       ok: false,
-      message: "Por favor hable con el administrador",
+      message: res.__('i18n.auth.007'),
       error: err.message, // 🔹 Enviar error detallado
     });
   }
@@ -301,8 +301,8 @@ const userUpdate = async (req, res) => {
 
     res.json({ ok: true, user: updatedUser });
   } catch (error) {
-    console.error('Error actualizando usuario:', error);
-    res.status(500).json({ ok: false, msg: 'Error del servidor' });
+    console.error(res.__('i18n.auth.020'), error);
+    res.status(500).json({ ok: false, msg: res.__('i18n.auth.007') });
   }
 };
 
