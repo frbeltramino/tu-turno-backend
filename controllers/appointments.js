@@ -499,7 +499,10 @@ const cancelAppointmentByClient = async (req, res = response) => {
     const fechaCompleta = moment(turnoDate).format('YYYY-MM-DD') + 'T' + turnoStart + ':00';
     const turnoDateTime = moment(fechaCompleta);
     const ahora = moment();
+    console.log("ahora : " + ahora.format('YYYY-MM-DD:HH:mm:ss'));
+    console.log( "turno date time : " + turnoDateTime.format('YYYY-MM-DD:HH:mm:ss'));
     const diferenciaEnHoras = turnoDateTime.diff(ahora, 'hours');
+    console.log("diferenciaEnHoras : " + diferenciaEnHoras);
     if (diferenciaEnHoras < process.env.HORAS_DE_CANCELACION) {
       return res.status(400).json({
         ok: false,
