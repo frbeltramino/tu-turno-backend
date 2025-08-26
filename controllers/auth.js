@@ -179,7 +179,7 @@ const guardarOtp = async (req, res = response) => {
     await otpObject.save();
 
     // Enviar email
-    const emailTitle = res.__('i18n.otp.email.title.001');
+    /*const emailTitle = res.__('i18n.otp.email.title.001');
     console.error("lenguaje: " + lang);
     console.error("emailTitle: " + emailTitle);
     try {
@@ -191,7 +191,7 @@ const guardarOtp = async (req, res = response) => {
         ok: false,
         message: emailError.message  // aquí será i18n.auth.021
       });
-    }
+    }*/
 
     // Respuesta al cliente
     return res.status(201).json({
@@ -271,7 +271,7 @@ const guardarRegisterOtp = async (req, res = response) => {
     await otpRegisterObject.save();
 
      // Enviar email
-    const emailTitle = res.__('i18n.otp.email.title.001');
+    /*const emailTitle = res.__('i18n.otp.email.title.001');
     try {
       await callSendRegisterOTPEmail(email, otp, emailTitle);
     } catch (emailError) {
@@ -281,7 +281,7 @@ const guardarRegisterOtp = async (req, res = response) => {
         ok: false,
         message: emailError.message  // aquí será i18n.auth.021
       });
-    }
+    }*/
 
     res.status(201).json({
       ok: true,
