@@ -2,12 +2,10 @@ const nodemailer = require('nodemailer');
 
 // Transporter con Gmail (puede cambiar según el proveedor)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  port: 587,
-  secure: false,
+  service: 'SendGrid', 
   auth: {
-    user: process.env.EMAIL_NEGOCIO,
-    pass: process.env.EMAIL_NEGOCIO_PASSWORD,
+    user: 'apikey', 
+    pass: process.env.SENDGRID_API_KEY,
   },
 });
 

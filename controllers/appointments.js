@@ -553,6 +553,7 @@ const cancelAppointmentByClient = async (req, res = response) => {
 
 const callSendEmail = async (turno, emailTitle, action) => {
   const { i18n, moment } = require('../i18n');
+  console.error("se llamo al enviar email");
   try {
     const service = await Service.findById(turno.service_id);
     if (!service) {
