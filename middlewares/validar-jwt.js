@@ -10,7 +10,7 @@ const validarJWT = (req, res = response, next) => {
   if (!token) {
     return res.status(401).json({
       ok: false,
-      message: 'No se encontro el token'
+      message: res.__('i18n.common.error.002')
     });
   }
 
@@ -27,7 +27,7 @@ const validarJWT = (req, res = response, next) => {
   } catch (err) {
     return res.status(401).json({
       ok: false,
-      message: 'No se pudo validar el token'
+      message: res.__('i18n.common.error.002')
     });
   }
 

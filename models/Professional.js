@@ -12,6 +12,7 @@ const WorkingHoursSchema = new mongoose.Schema({
 
 const WorkingDaySchema = new mongoose.Schema({
   day: { type: String, required: true },
+  index_day: { type: Number, required: true },
   working_hours: { type: WorkingHoursSchema, required: true }
 }, { _id: false });
 
