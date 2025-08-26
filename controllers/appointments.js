@@ -20,6 +20,9 @@ moment.locale('es');
 
 const createAppointment = async (req, res = response) => {
   try {
+    const lang = req.headers["x-lang"] || "es";
+    req.setLocale(lang);
+    console.error("lenguaje: " + lang);
     const {
       day,
       start_hour,
@@ -327,6 +330,8 @@ const cancelAppointment = async (req, res = response) => {
 };
 
 const completeAppointment = async (req, res = response) => {
+  const lang = req.headers["x-lang"] || "es";
+  req.setLocale(lang); 
   const { id } = req.params;
   const { deposit_amount } = req.body;
 
@@ -481,6 +486,8 @@ const getAppointmentsByDate = async (req, res = response) => {
 };
 
 const cancelAppointmentByClient = async (req, res = response) => {
+  const lang = req.headers["x-lang"] || "es";
+  req.setLocale(lang); 
   const { id } = req.params;
   console.log(req.params);
   try {
@@ -545,7 +552,7 @@ const cancelAppointmentByClient = async (req, res = response) => {
 };
 
 const callSendEmail = async (turno, emailTitle, action) => {
-  const i18n = require('../i18n');
+  const { i18n, moment } = require('../i18n');
   try {
     const service = await Service.findById(turno.service_id);
     if (!service) {

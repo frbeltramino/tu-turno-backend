@@ -12,7 +12,7 @@
   "i18n.appointments.010": "The appointment has been marked as accepted",
   "i18n.appointments.011": "The appointment has been cancelled successfully",
   "i18n.appointments.012": "Error cancelling the appointment (AP-ERR-012)",
-  "I18n.appointments.013": "Error completing the appointment (AP-ERR-013)",
+  "i18n.appointments.013": "Error completing the appointment (AP-ERR-013)",
   "i18n.appointments.014": "Error accepting the appointment (AP-ERR-014)",
   "i18n.appointments.015": "Please provide a date in the parameter date (YYYY-MM-DD)",
   "i18n.appointments.016": "The appointment cannot be cancelled because it is within the last ",
@@ -22,10 +22,10 @@
   "i18n.appointments.020": "In person",
   "i18n.appointments.021": "Error creating the Zoom Meeting (AP-ERR-021)",
 
-  "I18n.email.title.001": "Appintment request",
-  "I18n.email.title.002": "Appointment confirmation",
-  "I18n.email.title.003": "Appointment cancellation",
-  "I18n.email.title.004": "Accepted appointment",
+  "i18n.email.title.001": "Appointment request",
+  "i18n.email.title.002": "Appointment confirmation",
+  "i18n.email.title.003": "Appointment cancellation",
+  "i18n.email.title.004": "Accepted appointment",
   "i18n.email.title.005": "Virtual appointment request",
   "i18n.email.error.001": "Error sending email (EM-ERR-001)",
 
@@ -49,6 +49,7 @@
   "i18n.auth.018": "Registration OTP deleted (AU-018)",
   "i18n.auth.019": "User not found (AU-ERR-019)",
   "i18n.auth.020": "Error updating user (AU-ERR-020)",
+  "i18n.auth.021": "Failed to send the verification code. Please try again (AU-ERR-021)",
 
   "i18n.admin.auth.001": "Email not registered (AD-ERR-001)",
   "i18n.admin.auth.002": "You do not have administrator permissions (AD-ERR-002)",
@@ -81,6 +82,9 @@
   "i18n.servicesAndProfessionals.017": "Professional deleted successfully (SAP-017)",
   "i18n.servicesAndProfessionals.018": "Error deleting the professional (SAP-ERR-018)",
 
-  "i18n.common.error.001": "Please speak with the administrator"
+  "i18n.common.error.001": "Please speak with the administrator",
+  "i18n.common.error.002": "Your session has expired, please log in again.",
+
+  "i18n.otp.email.title.001": "Verification Code - Appointment App"
 
 }

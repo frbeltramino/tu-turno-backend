@@ -22,6 +22,20 @@ const sendAppointmentEmail = async (to, subject, htmlContent) => {
   await transporter.sendMail(mailOptions);
 };
 
+// Función para enviar correo
+const sendOTPEmail = async (to, subject, htmlContent) => {
+  const nombreNegocio = `"${process.env.NOMBRE_NEGOCIO}" <${process.env.EMAIL_NEGOCIO}>`;
+  const mailOptions = {
+    from: nombreNegocio,
+    to: to,
+    subject,
+    html: htmlContent,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
 module.exports = {
   sendAppointmentEmail,
+  sendOTPEmail
 };

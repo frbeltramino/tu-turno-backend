@@ -48,6 +48,7 @@
   "i18n.auth.018": "OTP de registro eliminado (AU-018)",
   "i18n.auth.019": "Usuario no encontrado (AU-ERR-019)",
   "i18n.auth.020": "Error actualizando usuario (AU-ERR-020)",
+  "i18n.auth.021": "No se pudo enviar el código de verificación. Por favor, inténtalo de nuevo. (AU-ERR-021)",
 
   "i18n.admin.auth.001": "Correo no registrado (AD-ERR-001)",
   "i18n.admin.auth.002": "No tienes permisos de administrador (AD-ERR-002)",
@@ -81,5 +82,8 @@
   "i18n.servicesAndProfessionals.018": "Error al eliminar el profesional (SAP-ERR-018)",
 
 
-  "i18n.common.error.001": "Por favor hable con el administrador"
+  "i18n.common.error.001": "Por favor hable con el administrador",
+  "i18n.common.error.002": "Tu sesión ha caducado, por favor vuelve a iniciar sesión.",
+
+  "i18n.otp.email.title.001": "Codigo de verificación - Tu Turno App"
 }

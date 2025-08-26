@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const { generarJWT } = require('../helpers/jwt');
 const Otp = require('../models/OTP');
 const otpRegister = require('../models/RegisterOTP')
+const { sendOTPEmail } = require('../helpers/sendEmail');
+const { generateOTPTemplate, generateRegisterOTPTemplate } = require('../emailTemplates/otpTemplates');
 
 
 
@@ -141,52 +143,71 @@ const revalidarToken = async (req, res = response) => {
 // otp para ingreso de usuario
 
 const guardarOtp = async (req, res = response) => {
-
+  const lang = req.headers["x-lang"] || "es";
+  req.setLocale(lang); 
   const { otp, email } = req.body;
   const date = new Date();
-  console.log(req.body);
-
-  const usuario = await Usuario.findOne({ email });
-  if (!usuario) {
-    res.status(400).json({
-      ok: false,
-      message: res.__('i18n.auth.008')
-    });
-    return;
-  }
-  const idUsuario = usuario._id;
-  
-  const otpSaved = await Otp.findOne({ idUsuario });
-  if (otpSaved) {
-    res.status(500).json({
-      ok: false,
-      message: res.__('i18n.auth.012')
-    });
-    return;
-  }
 
   try {
+    // Buscar usuario
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+      return res.status(400).json({
+        ok: false,
+        message: res.__('i18n.auth.008')
+      });
+    }
 
-  const otpObject = new Otp({
-    date,
-    idUsuario,
-    otp
-  })
+    const idUsuario = usuario._id;
 
-  await otpObject.save();
+    // Verificar si ya existe un OTP activo para este usuario
+    const otpSaved = await Otp.findOne({ idUsuario });
+    if (otpSaved) {
+      return res.status(409).json({  
+        ok: false,
+        message: res.__('i18n.auth.012')
+      });
+    }
 
-  res.status(201).json({
-    ok: true,
-    Otp,
-    message: res.__('i18n.auth.015')
-  });
-} catch (err) {
-  res.status(500).json({
-    ok: false,
-    message: res.__('i18n.auth.007')
-  });
-}
-}
+    // Crear y guardar OTP
+    const otpObject = new Otp({
+      date,
+      idUsuario,
+      otp
+    });
+
+    await otpObject.save();
+
+    // Enviar email
+    const emailTitle = res.__('i18n.otp.email.title.001');
+    console.error("lenguaje: " + lang);
+    console.error("emailTitle: " + emailTitle);
+    try {
+      await callSendOTPEmail(usuario, otp, emailTitle);
+    } catch (emailError) {
+      console.error("Error enviando OTP:", emailError);
+      // Respondemos específicamente sobre fallo de email
+      return res.status(500).json({
+        ok: false,
+        message: emailError.message  // aquí será i18n.auth.021
+      });
+    }
+
+    // Respuesta al cliente
+    return res.status(201).json({
+      ok: true,
+      otp: otpObject, 
+      message: res.__('i18n.auth.015')
+    });
+
+  } catch (err) {
+    console.error("Error en guardarOtp:", err);
+    return res.status(500).json({
+      ok: false,
+      message: res.__('i18n.auth.007')
+    });
+  }
+};
 
 const getOtp = async (req, res = response) => {
   const { idUsuario } = req.body;
@@ -226,6 +247,8 @@ const deleteOtp = async (req, res = response) => {
 }
 // Otp para registro de usuario
 const guardarRegisterOtp = async (req, res = response) => {
+  const lang = req.headers["x-lang"] || "es";
+  req.setLocale(lang); 
   const { otp, email } = req.body;
   const date = new Date();
   console.log("📩 Datos recibidos:", req.body);
@@ -247,11 +270,24 @@ const guardarRegisterOtp = async (req, res = response) => {
     console.log("💾 Guardando OTP:", otpRegisterObject);
     await otpRegisterObject.save();
 
+     // Enviar email
+    const emailTitle = res.__('i18n.otp.email.title.001');
+    try {
+      await callSendRegisterOTPEmail(email, otp, emailTitle);
+    } catch (emailError) {
+      console.error("Error enviando OTP:", emailError);
+      // Respondemos específicamente sobre fallo de email
+      return res.status(500).json({
+        ok: false,
+        message: emailError.message  // aquí será i18n.auth.021
+      });
+    }
+
     res.status(201).json({
       ok: true,
       message: res.__('i18n.auth.017'),
-      otp: otp, // 🔹 Ahora el frontend recibe el OTP
-      email: email, // (opcional) Enviar el email de vuelta
+      otp: otp, 
+      email: email, 
     });
   } catch (err) {
     console.error("🔥 Error en el servidor:", err);
@@ -303,6 +339,40 @@ const userUpdate = async (req, res) => {
   } catch (error) {
     console.error(res.__('i18n.auth.020'), error);
     res.status(500).json({ ok: false, msg: res.__('i18n.auth.007') });
+  }
+};
+
+const callSendOTPEmail = async (user, otp, emailTitle) => {
+  const { i18n } = require('../i18n');
+
+  try {
+    const htmlContent = generateOTPTemplate({
+      nombreCliente: user.name,
+      OTP: otp
+    });
+    await sendOTPEmail(user.email, emailTitle, htmlContent);
+
+    return true; // todo OK
+
+  } catch (error) {
+    console.error(i18n.__('i18n.auth.021'), error);
+    throw new Error(i18n.__('i18n.auth.021'));
+  }
+};
+
+const callSendRegisterOTPEmail = async (email, otp, emailTitle) => {
+  const { i18n, moment } = require('../i18n');
+  
+  try {
+    htmlContent = generateRegisterOTPTemplate({
+      nombreCliente: email,
+      OTP: otp
+    });
+    await sendOTPEmail(email, emailTitle, htmlContent);
+    
+  } catch (error) {
+    console.error(i18n.__('i18n.auth.021'), error);
+    throw new Error(i18n.__('i18n.auth.021'));
   }
 };
 

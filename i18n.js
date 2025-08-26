@@ -1,14 +1,26 @@
 const i18n = require('i18n');
 const path = require('path');
+const moment = require('moment');
+
+// importar locales que vayas a usar
+require('moment/locale/es');
+require('moment/locale/en-gb');
 
 i18n.configure({
   locales: ['en', 'es'],
-  directory: path.join(__dirname, 'locales'), // Carpeta donde están tus JSON de traducciones
+  directory: path.join(__dirname, 'locales'),
   defaultLocale: 'es',
-  queryParameter: 'lang', // Permite cambiar idioma con ?lang=es
-  objectNotation: false,   // Permite usar claves anidadas con puntos
-  autoReload: true,       // Recarga si cambias los JSON
-  updateFiles: false      // No crea traducciones vacías automáticamente
+  queryParameter: 'lang',
+  objectNotation: false,
+  autoReload: true,
+  updateFiles: false
 });
 
-module.exports = i18n;
+// función para sincronizar moment con i18n
+i18n.setLocaleAndMoment = (locale) => {
+  i18n.setLocale(locale);
+  moment.locale(locale);
+};
+
+// exportamos **tanto i18n como moment**
+module.exports = { i18n, moment };
