@@ -1,7 +1,14 @@
 const { Router } = require('express');
 const router = Router();
 const { validarJWT } = require("../middlewares/validar-jwt");
-const { createService, createProfessional, getServicesWithProfessionals, deleteService, deleteProfessional, updateService, updateProfessional } = require('../controllers/servicesAndProfessionals');
+const { createService,
+  createProfessional,
+  getServicesWithProfessionals,
+  deleteService, deleteProfessional,
+  updateService,
+  updateProfessional,
+  getProfessionals
+} = require('../controllers/servicesAndProfessionals');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { isDate } = require('../helpers/isDate');
@@ -10,6 +17,7 @@ const { isDate } = require('../helpers/isDate');
 
 
 router.get("/", getServicesWithProfessionals);
+router.get("/getProfessionals", getProfessionals);
 // Crear un servicio
 router.use(validarJWT);
 

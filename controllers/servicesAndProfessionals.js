@@ -332,6 +332,22 @@ const deleteProfessional = async (req, res) => {
   }
 };
 
+const getProfessionals = async (req, res) => {
+  try {
+    const professionals = await Professional.find();
+    res.status(200).json({
+      ok: true,
+      professionals,
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      message: res.__('i18n.servicesAndProfessionals.019'),
+      error: error.message,
+    });
+  }
+};
+
 
 module.exports = {
   createService,
@@ -340,7 +356,8 @@ module.exports = {
   deleteService,
   deleteProfessional,
   updateService,
-  updateProfessional
+  updateProfessional,
+  getProfessionals
   // getServices,
   // getServicesByClientId,
   // updateService,

@@ -80,6 +80,7 @@
   "i18n.servicesAndProfessionals.016": "Error al eliminar el servicio (SAP-ERR-016)",
   "i18n.servicesAndProfessionals.017": "Profesional eliminado correctamente",
   "i18n.servicesAndProfessionals.018": "Error al eliminar el profesional (SAP-ERR-018)",
+  "i18n.servicesAndProfessionals.019": "Error al obtener los profesionales (SAP-ERR-019)",
 
 
   "i18n.common.error.001": "Por favor hable con el administrador",

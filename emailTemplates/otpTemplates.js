@@ -1,11 +1,13 @@
 const translationsOTP = { 
   es: {
+    otpTile: "Código de verificación",
     noReply: "Este es un mensaje automático. Por favor, no respondas a este correo.",
     hello: "¡Hola",
     titleOTP: "Tu nuevo código de verificación",
     thankYou: "Gracias por usar nuestra aplicación."
   },
   en: {
+    otpTile: "Verification code",
     noReply: "This is an automated message. Please do not reply to this email.",
     hello: "Hello",
     titleOTP: "Your new verification code",

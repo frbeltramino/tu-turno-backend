@@ -110,9 +110,9 @@ const createAppointment = async (req, res = response) => {
     });
 
     if (service.requires_deposit) {
-      callSendEmail(turno, emailTitle, 'createPendingAppt');
+      callSendEmail(turno, emailTitle, 'createPendingAppt', lang);
     } else {
-      callSendEmail(turno, emailTitle, 'createAppt');
+      callSendEmail(turno, emailTitle, 'createAppt', lang);
     }
 
   } catch (err) {
@@ -128,15 +128,51 @@ const createAppointment = async (req, res = response) => {
 
 const getAppointments = async (req, res = response) => {
   try {
-    const turnos = await Turno.find().select('-meet_link -profesional_email -profesional_phone');
+    const { estado, profesional, cliente, fechaDesde, fechaHasta, page = 1, limit = 10 } = req.query;
+
+    // Filtros dinámicos
+    const filters = {};
+
+    if (estado) {
+      filters.estado = estado; // "pendiente", "confirmado", etc.
+    }
+
+    if (profesional) {
+      filters.profesional = profesional; // id o email
+    }
+
+    if (cliente) {
+      filters.cliente = cliente; // id o email
+    }
+
+    if (fechaDesde && fechaHasta) {
+      filters.fecha = { $gte: new Date(fechaDesde), $lte: new Date(fechaHasta) };
+    }
+
+    // Paginación
+    const skip = (page - 1) * limit;
+
+    const [turnos, total] = await Promise.all([
+      Turno.find(filters)
+        .select('-meet_link -profesional_email -profesional_phone')
+        .skip(skip)
+        .limit(Number(limit))
+        .sort({ fecha: 1 }), // ordena por fecha ascendente
+      Turno.countDocuments(filters)
+    ]);
+
     res.status(200).json({
       ok: true,
+      total,
+      page: Number(page),
+      totalPages: Math.ceil(total / limit),
       turnos
     });
+
   } catch (err) {
     res.status(500).json({
       ok: false,
-      message: res.__('i18n.appointments.001')
+      message: res.__('i18n.appointments.029') || 'Error al obtener turnos'
     });
   }
 };
@@ -551,7 +587,7 @@ const cancelAppointmentByClient = async (req, res = response) => {
   }
 };
 
-const callSendEmail = async (turno, emailTitle, action) => {
+const callSendEmail = async (turno, emailTitle, action, lang) => {
   const { i18n, moment } = require('../i18n');
   console.error("se llamo al enviar email");
   try {
@@ -595,7 +631,8 @@ const callSendEmail = async (turno, emailTitle, action) => {
           depositoInicial: formatAmount(service.deposit_amount),
           profesionalPhone: profesional.phone,
           serviceType,
-          address
+          address,
+          lang
         });
         break;
 
@@ -608,7 +645,8 @@ const callSendEmail = async (turno, emailTitle, action) => {
           servicio: service_name,
           serviceType,
           meetLink: meet_link,
-          address
+          address,
+          lang
         });
         break;
 
@@ -619,7 +657,8 @@ const callSendEmail = async (turno, emailTitle, action) => {
           horaTurno: start_hour,
           profesionalName: professional_name,
           servicio: service_name,
-          serviceType
+          serviceType,
+          lang
         });
         break;
     }
@@ -643,7 +682,8 @@ const callSendEmail = async (turno, emailTitle, action) => {
             depositoInicial: formatAmount(service.deposit_amount),
             profesionalPhone: profesional.phone,
             serviceType,
-            address
+            address,
+            lang
           });
           break;
         case 'createAppt':
@@ -659,7 +699,8 @@ const callSendEmail = async (turno, emailTitle, action) => {
             profesionalPhone: profesional.phone,
             serviceType,
             meetLink: meet_link,
-            address
+            address,
+            lang
           });
         break;
       case 'cancelAppointment':
@@ -672,7 +713,8 @@ const callSendEmail = async (turno, emailTitle, action) => {
           horaTurno: start_hour,
           profesionalName: professional_name,
           servicio: service_name,
-          serviceType
+          serviceType,
+          lang
         });
       break;
         

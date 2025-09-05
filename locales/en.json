@@ -81,6 +81,7 @@
   "i18n.servicesAndProfessionals.016": "Error deleting the service (SAP-ERR-016)",
   "i18n.servicesAndProfessionals.017": "Professional deleted successfully (SAP-017)",
   "i18n.servicesAndProfessionals.018": "Error deleting the professional (SAP-ERR-018)",
+  "i18n.servicesAndProfessionals.019": "Error retrieving the professionals (SAP-ERR-019)",
 
   "i18n.common.error.001": "Please speak with the administrator",
   "i18n.common.error.002": "Your session has expired, please log in again.",
