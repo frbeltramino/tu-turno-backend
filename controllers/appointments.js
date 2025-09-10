@@ -624,7 +624,7 @@ const callSendEmail = async (turno, emailTitle, action, lang) => {
       case 'createPendingAppt':
         htmlContent = generatePendingApptTemplate({
           nombreCliente: client_name,
-          diaTurno: formatDate(date),
+          diaTurno: formatDate(date, lang),
           horaTurno: start_hour,
           profesionalName: professional_name,
           servicio: service_name,
@@ -639,7 +639,7 @@ const callSendEmail = async (turno, emailTitle, action, lang) => {
       case 'createAppt':
         htmlContent = generateApptTemplate({
           nombreCliente: client_name,
-          diaTurno: formatDate(date),
+          diaTurno: formatDate(date, lang),
           horaTurno: start_hour,
           profesionalName: professional_name,
           servicio: service_name,
@@ -653,7 +653,7 @@ const callSendEmail = async (turno, emailTitle, action, lang) => {
        case 'cancelAppointment':
         htmlContent = generateCancelAppointmentTemplate({
           nombreCliente: client_name,
-          diaTurno: formatDate(date),
+          diaTurno: formatDate(date, lang),
           horaTurno: start_hour,
           profesionalName: professional_name,
           servicio: service_name,
@@ -675,7 +675,7 @@ const callSendEmail = async (turno, emailTitle, action, lang) => {
             nombreCliente: client_name,
             emailCliente: client_email,
             phoneCliente: client_phone,
-            diaTurno: formatDate(date),
+            diaTurno: formatDate(date, lang),
             horaTurno: start_hour,
             profesionalName: professional_name,
             servicio: service_name,
@@ -691,7 +691,7 @@ const callSendEmail = async (turno, emailTitle, action, lang) => {
             nombreCliente: client_name,
             emailCliente: client_email,
             phoneCliente: client_phone,
-            diaTurno: formatDate(date),
+            diaTurno: formatDate(date, lang),
             horaTurno: start_hour,
             profesionalName: professional_name,
             servicio: service_name,
@@ -709,7 +709,7 @@ const callSendEmail = async (turno, emailTitle, action, lang) => {
           emailCliente: client_email,
           phoneCliente: client_phone,
           nombreCliente: client_name,
-          diaTurno: formatDate(date),
+          diaTurno: formatDate(date, lang),
           horaTurno: start_hour,
           profesionalName: professional_name,
           servicio: service_name,
