@@ -328,7 +328,8 @@ const updateAppointment = async (req, res = response) => {
 
 const cancelAppointment = async (req, res = response) => {
   const { id } = req.params;
-
+  const lang = req.headers["x-lang"] || "es";
+  req.setLocale(lang);
   try {
     const turno = await Turno.findById(id);
 
@@ -350,11 +351,14 @@ const cancelAppointment = async (req, res = response) => {
 
     await turno.save();
 
+    const emailTitle = res.__('i18n.email.title.003');
+    callSendEmail(turno, emailTitle, 'cancelAppointment', lang);
     res.status(200).json({
       ok: true,
       message: res.__('i18n.appointments.011'),
       turno
     });
+   
 
   } catch (err) {
     console.error(err);
@@ -410,6 +414,8 @@ const completeAppointment = async (req, res = response) => {
 const acceptAppointment = async (req, res = response) => {
   const { id } = req.params;
   const { deposit_amount } = req.body;
+  const lang = req.headers["x-lang"] || "es";
+  req.setLocale(lang);
   try {
     const turno = await Turno.findById(id);
 
@@ -448,7 +454,8 @@ const acceptAppointment = async (req, res = response) => {
       turno
     });
     const emailTitle = res.__('i18n.email.title.004');
-    callSendEmail(turno, emailTitle, 'createAppt');
+    console.error(emailTitle);
+    callSendEmail(turno, emailTitle, 'createAppt', lang);
 
   } catch (err) {
     console.error(err);
@@ -569,7 +576,7 @@ const cancelAppointmentByClient = async (req, res = response) => {
 
  
     const emailTitle = res.__('i18n.email.title.003');
-    callSendEmail(turno, emailTitle, 'cancelAppointment');
+    callSendEmail(turno, emailTitle, 'cancelAppointment', lang);
 
 
     res.status(200).json({
