@@ -445,7 +445,7 @@ const acceptAppointment = async (req, res = response) => {
       const meet_link = await createZoomMeeting(turno.service_name, turno.start_hour, turno.duration);
       turno.meet_link = meet_link;
     }
-
+   
     await turno.save();
 
     res.status(200).json({
@@ -598,6 +598,8 @@ const callSendEmail = async (turno, emailTitle, action, lang) => {
   const { i18n, moment } = require('../i18n');
   console.error("se llamo al enviar email");
   try {
+    const locale = lang || 'es';
+    i18n.setLocale(locale);
     const service = await Service.findById(turno.service_id);
     if (!service) {
       console.error(i18n.__('i18n.appointments.003'));
